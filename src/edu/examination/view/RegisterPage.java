@@ -2,6 +2,8 @@ package edu.examination.view;
 
 import java.util.Scanner;
 
+import edu.examination.config.Error;
+import edu.examination.config.Message;
 import edu.examination.controller.RegisterController;
 
 public class RegisterPage extends RegisterController {
@@ -18,7 +20,8 @@ public class RegisterPage extends RegisterController {
 		enterEmail();
 		enterPassword();
 		if(register(instiEmailAddress, instiPassword)== true){
-			System.out.println("REGISTRATION SUCCESSFUL");
+			System.out.println(Message.REGISTER_SUCCESSFUL.getDescription());
+			
 		}
 		//thieu case register=false
 	}
@@ -28,12 +31,12 @@ public class RegisterPage extends RegisterController {
 			System.out.print("Enter instituation email: ");
 			instiEmailAddress = scanner.nextLine();
 			if(isValidEmail(instiEmailAddress)==false){
-				System.out.println("THE EMAIL IS NOT VALID. PLEASE ENTER AGAIN!");
+				System.err.println(Error.EMAIL_NOT_VALID.getDescription());
 				continue;
 			}
 			
 			if(isEmailDuplicated(instiEmailAddress)==true){
-				System.out.println("THE EMAIL HAVE EXISTED IN THE SYSTEM. PLEASE ENTER OTHER.");
+				System.err.println(Error.EMAIL_EXISTED.getDescription());
 				continue;
 			}
 			break;
@@ -45,7 +48,7 @@ public class RegisterPage extends RegisterController {
 			System.out.print("Enter instituation password: ");
 			instiPassword = scanner.nextLine();
 			if(isValidPassword(instiPassword) == false){
-				System.out.println("THE PASSWORD IS NOT VALID. PASSWORD MUST BE AT LEAST 6 CHARACTERS LONG, ONE UPPERCASE, ONE LOWERCASE AND ONE NUMERIC CHARACTER.");
+				System.err.println(Error.PASSWORD_NOT_VALID.getDescription());
 				continue;
 			}
 			break;

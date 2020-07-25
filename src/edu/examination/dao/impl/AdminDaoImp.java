@@ -21,7 +21,7 @@ public class AdminDaoImp implements AdminDao{
 		
 	}
 	
-	private Connection getConnection() throws SQLException{
+	private Connection getConnection(){
 		Connection conn;
 		conn = ConnectionFactory.getInstance().getConnection();
 		return conn;

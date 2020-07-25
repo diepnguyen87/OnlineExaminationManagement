@@ -21,7 +21,7 @@ public class InstituationDaoImpl implements InstituationDao{
 		
 	}
 	
-	private Connection getConnection() throws SQLException{
+	private Connection getConnection(){
 		Connection conn;
 		conn = ConnectionFactory.getInstance().getConnection();
 		return conn;

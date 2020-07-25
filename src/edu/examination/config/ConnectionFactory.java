@@ -3,6 +3,7 @@ package edu.examination.config;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.SQLNonTransientConnectionException;
 
 public class ConnectionFactory {
 	String driverClassName = "org.mariadb.jdbc.Driver";
@@ -15,14 +16,26 @@ public class ConnectionFactory {
 	private ConnectionFactory(){
 		try{
 			Class.forName(driverClassName);
-		}catch(Exception e){
-			e.printStackTrace();
+		}catch(ClassNotFoundException e){
+			System.err.println("Driver not found: " + e.getMessage());
+			System.err.println(Message.CONTACT_ADMIN);
+			System.exit(0);
 		}
 	}
 	
-	public Connection getConnection() throws SQLException{
+	public Connection getConnection(){
 		Connection conn = null;
-		conn = DriverManager.getConnection(connectionUrl, dbUser, dbPwd);
+		try {
+			conn = DriverManager.getConnection(connectionUrl, dbUser, dbPwd);
+		}catch (SQLNonTransientConnectionException e) {
+			System.err.println(e.getMessage());
+			System.err.println(Message.CONTACT_ADMIN);
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		if(conn == null) {
+			System.exit(0);
+		}
 		return conn;
 	}
 	
