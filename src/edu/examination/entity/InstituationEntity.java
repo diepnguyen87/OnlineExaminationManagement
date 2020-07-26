@@ -1,8 +1,6 @@
 package edu.examination.entity;
 
-import java.io.Serializable;
-
-public class InstituationEntity implements Serializable {
+public class InstituationEntity {
 
 	private String instituationID;
 	private String instiEmailAddress;

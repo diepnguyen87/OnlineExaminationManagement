@@ -17,24 +17,41 @@ public class LoginController {
 	private InstituationDao instituation;
 	private UserDao user;
 	private AdminDao admin;
-	protected String role;
-	
-	public boolean login(String email, String password){
+	public String role;
+
+	public LoginController() {
+
+	}
+
+	public LoginController(String roleOption) {
+		if (roleOption.equals("1")) {
+			role = "Admin";
+			admin = new AdminDaoImp();
+		} else if (roleOption.equals("2")) {
+			role = "Instituation";
+			instituation = new InstituationDaoImpl();
+		} else if (roleOption.equals("3")) {
+			role = "User";
+			user = new UserDaoImpl();
+		}
+	}
+
+	public boolean login(String email, String password) {
 		boolean succesfulLogin = false;
-		if(role.equals("Admin")){
+		if (role.equals("Admin")) {
 			admin = new AdminDaoImp();
 			succesfulLogin = loginAdmin(email, password);
-		}else if(role.equals("Instituation")){
+		} else if (role.equals("Instituation")) {
 			instituation = new InstituationDaoImpl();
 			succesfulLogin = loginInstituation(email, password);
-		}else if(role.equals("User")){
+		} else if (role.equals("User")) {
 			user = new UserDaoImpl();
 			succesfulLogin = loginUser(email, password);
 		}
 		return succesfulLogin;
 	}
-	
-	public boolean loginAdmin(String email, String password) {
+
+	private boolean loginAdmin(String email, String password) {
 		List<AdminEntity> adminList = admin.getAllAdmins();
 		for (AdminEntity currentAdmin : adminList) {
 			String currentAdminEmail = currentAdmin.getAdminEmailAddress();
@@ -42,13 +59,13 @@ public class LoginController {
 				String currentAdminPassword = currentAdmin.getAdminPassword();
 				if (currentAdminPassword.equals(password)) {
 					return true;
-				} 
+				}
 			}
 		}
 		return false;
 	}
-	
-	public boolean loginInstituation(String email, String password) {
+
+	private boolean loginInstituation(String email, String password) {
 		List<InstituationEntity> instituationList = instituation.getAllInstituations();
 		for (InstituationEntity currentInstitute : instituationList) {
 			String currentInstiEmail = currentInstitute.getInstiEmailAddress();
@@ -61,9 +78,8 @@ public class LoginController {
 		}
 		return false;
 	}
-	
-	
-	public boolean loginUser(String email, String password) {
+
+	private boolean loginUser(String email, String password) {
 		List<UserEntity> userList = user.getAllUsers();
 		for (UserEntity currentUser : userList) {
 			String currentUserEmail = currentUser.getUserEmailAddress();
@@ -76,6 +92,5 @@ public class LoginController {
 		}
 		return false;
 	}
-	
-	
+
 }

@@ -2,6 +2,7 @@ package edu.examination.view;
 
 import java.util.Scanner;
 
+import edu.examination.config.ConsoleColors;
 import edu.examination.config.Error;
 import edu.examination.config.Message;
 import edu.examination.controller.LoginController;
@@ -18,13 +19,7 @@ public class LoginPage extends LoginController {
 	}
 	
 	public LoginPage(String roleOption){
-		if(roleOption.equals("1")){
-			role = "Admin";
-		}else if(roleOption.equals("2")){
-			role = "Instituation";
-		}else if(roleOption.equals("3")){
-			role = "User";
-		}
+		super(roleOption);
 	}
 	
 	public void displayAdminLoginPage(){
@@ -46,14 +41,14 @@ public class LoginPage extends LoginController {
 				login();
 				break outerloop;
 			case "2":
-				RegisterPage register = new RegisterPage();
-				register.registerInstituation();
+				RegisterPage register = new RegisterPage(this);
+				register.register();
 				break outerloop;
 			case "3":
 				System.out.println(Message.EXIT_APP.getDescription());
 				System.exit(0);
 			default:
-				System.out.println(Message.INCORRECT_OPTION.getDescription());
+				System.out.println(Error.INCORRECT_OPTION.getDescription());
 				
 			}
 		}
@@ -65,12 +60,13 @@ public class LoginPage extends LoginController {
 			enterEmail();
 			enterPassword();
 			if (login(email, password) == true) {
-				System.out.println(Message.LOGIN_SUCCESSFUL);
-				System.out.printf("WELCOME %s TO ONLINE EXAMINATION MANAGEMENT SYSTEM", email.toUpperCase());
+				System.out.println(Message.LOGIN_SUCCESSFUL.getDescription());
+				System.out.printf(ConsoleColors.BLUE_BOLD +
+						"WELCOME %s TO ONLINE EXAMINATION MANAGEMENT SYSTEM" + ConsoleColors.RESET, email.toUpperCase());
 				return;
 			} else {
-				System.err.println(Error.INCORRECT_AUTHENICATION.getDescription());
-				System.out.print("TRY AGAIN? ENTER (Y/N): ");
+				System.out.println(Error.INCORRECT_AUTHENICATION.getDescription());
+				System.out.print("TRY AGAIN (enter Y/N)? ");
 				String option = scanner.nextLine().toUpperCase();
 				
 				switch (option) {
@@ -93,12 +89,12 @@ public class LoginPage extends LoginController {
 			System.out.print("Enter email: ");
 			email = scanner.nextLine();
 			if (email.isEmpty()) {
-				System.err.println(Error.EMAIL_BLANK.getDescription());
+				System.out.println(Error.EMAIL_BLANK.getDescription());
 				continue;
 			}
 
 			if (isValidEmail(email) == false) {
-				System.err.println(Error.EMAIL_NOT_VALID.getDescription());
+				System.out.println(Error.EMAIL_NOT_VALID.getDescription());
 				continue;
 			}
 			break;
@@ -110,7 +106,7 @@ public class LoginPage extends LoginController {
 			System.out.print("Enter password: ");
 			password = scanner.nextLine();
 			if (password.isEmpty()) {
-				System.err.println(Error.PASSWORD_BLANK.getDescription());
+				System.out.println(Error.PASSWORD_BLANK.getDescription());
 				continue;
 			}
 			break;

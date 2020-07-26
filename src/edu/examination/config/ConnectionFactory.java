@@ -17,8 +17,8 @@ public class ConnectionFactory {
 		try{
 			Class.forName(driverClassName);
 		}catch(ClassNotFoundException e){
-			System.err.println("Driver not found: " + e.getMessage());
-			System.err.println(Message.CONTACT_ADMIN);
+			System.out.println(ConsoleColors.RED + "Driver not found: " + e.getMessage() + ConsoleColors.RESET);
+			System.out.println(Message.CONTACT_ADMIN.getDescription());
 			System.exit(0);
 		}
 	}
@@ -28,8 +28,8 @@ public class ConnectionFactory {
 		try {
 			conn = DriverManager.getConnection(connectionUrl, dbUser, dbPwd);
 		}catch (SQLNonTransientConnectionException e) {
-			System.err.println(e.getMessage());
-			System.err.println(Message.CONTACT_ADMIN);
+			System.out.println(ConsoleColors.RED + e.getMessage() + ConsoleColors.RESET);
+			System.out.println(Message.CONTACT_ADMIN.getDescription());
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}

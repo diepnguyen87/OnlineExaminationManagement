@@ -2,11 +2,14 @@ package edu.examination.view;
 
 import java.util.Scanner;
 
+import edu.examination.config.ConsoleColors;
+import edu.examination.config.Error;
+
 public class MainClass {
 	private static Scanner scanner = new Scanner(System.in);
 	
 	public static void displayHomePage(){
-		System.out.println("WELCOME ONLINE EXAMINATION MANAGEMENT SYSTEM");
+		System.out.println(ConsoleColors.BLUE_BOLD + "WELCOME ONLINE EXAMINATION MANAGEMENT SYSTEM" + ConsoleColors.RESET);
 		System.out.println("1. Admin");
 		System.out.println("2. Instituation");
 		System.out.println("3. User");
@@ -32,8 +35,7 @@ public class MainClass {
 				userLogin.displayLoginPage();
 				break outerloop;
 			default:
-				System.out.println("WARNING: INCORRECT OPTION. PLEASE ENTER AGAIN!");
-				
+				System.out.println(Error.INCORRECT_OPTION.getDescription());
 			}
 		}
 	}

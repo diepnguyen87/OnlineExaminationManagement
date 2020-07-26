@@ -7,9 +7,7 @@ public enum Message {
 	REGISTER_SUCCESSFUL(1, "REGISTRATION SUCCESSFUL"),
 	LOGIN_SUCCESSFUL(2, "LOGIN SUCCESSFUL!"),
 	
-	INCORRECT_OPTION(3,"INCORRECT OPTION. PLEASE ENTER AGAIN!"),
-	
-	CONTACT_ADMIN(4, "PLEASE CONTACT WITH ADMIN TO FIX");
+	CONTACT_ADMIN(3, "PLEASE CONTACT WITH ADMIN TO FIX");
 	
 	
 	private final int code;
@@ -17,7 +15,7 @@ public enum Message {
 
 	private Message(int code, String description) {
 		this.code = code;
-		this.description = description;
+		this.description = ConsoleColors.BLUE_BOLD + description + ConsoleColors.RESET;
 	}
 
 	public String getDescription() {

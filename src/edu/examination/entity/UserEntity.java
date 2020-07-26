@@ -1,8 +1,6 @@
 package edu.examination.entity;
 
-import java.io.Serializable;
-
-public class UserEntity implements Serializable{
+public class UserEntity{
 
 	private String userID;
 	private String userEmailAddress;
@@ -12,9 +10,8 @@ public class UserEntity implements Serializable{
 		
 	}
 	
-	public UserEntity(String userID, String userEmailAddress, String userPassword) {
+	public UserEntity(String userEmailAddress, String userPassword) {
 		super();
-		this.userID = userID;
 		this.userEmailAddress = userEmailAddress;
 		this.userPassword = userPassword;
 	}

@@ -7,5 +7,5 @@ public interface UserDao {
 
 	public List<UserEntity> getAllUsers();
 	public UserEntity getUser(int userID);
-	public void addUser(UserEntity newUser);
+	public int addUser(UserEntity newUser);
 }

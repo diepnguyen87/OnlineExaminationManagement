@@ -77,15 +77,16 @@ public class UserDaoImpl implements UserDao{
 	
 
 	@Override
-	public void addUser(UserEntity newUser) {
+	public int addUser(UserEntity newUser) {
+		int addedRows=0;
 		try {
-		String queryString = "Insert into user(userEmailAddress, userPassword) "
+		String queryString = "Insert into user(user_email_address, user_password) "
 							+ "values(?,?)";
 			connection = getConnection();
 			ptmt = connection.prepareStatement(queryString);
 			ptmt.setString(1, newUser.getUserEmailAddress());
 			ptmt.setString(2, newUser.getUserPassword());
-			ptmt.executeUpdate();
+			addedRows = ptmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}catch (Exception e) {
@@ -103,7 +104,8 @@ public class UserDaoImpl implements UserDao{
 			}catch (Exception e) {
 				e.printStackTrace();
 			}
-		}		
+		}
+		return addedRows;
 	}
 
 }
