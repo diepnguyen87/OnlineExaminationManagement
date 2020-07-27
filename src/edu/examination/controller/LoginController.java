@@ -5,7 +5,7 @@ import java.util.List;
 import edu.examination.dao.AdminDao;
 import edu.examination.dao.InstituationDao;
 import edu.examination.dao.UserDao;
-import edu.examination.dao.impl.AdminDaoImp;
+import edu.examination.dao.impl.AdminDaoImpl;
 import edu.examination.dao.impl.InstituationDaoImpl;
 import edu.examination.dao.impl.UserDaoImpl;
 import edu.examination.entity.AdminEntity;
@@ -26,7 +26,7 @@ public class LoginController {
 	public LoginController(String roleOption) {
 		if (roleOption.equals("1")) {
 			role = "Admin";
-			admin = new AdminDaoImp();
+			admin = new AdminDaoImpl();
 		} else if (roleOption.equals("2")) {
 			role = "Instituation";
 			instituation = new InstituationDaoImpl();
@@ -39,7 +39,7 @@ public class LoginController {
 	public boolean login(String email, String password) {
 		boolean succesfulLogin = false;
 		if (role.equals("Admin")) {
-			admin = new AdminDaoImp();
+			admin = new AdminDaoImpl();
 			succesfulLogin = loginAdmin(email, password);
 		} else if (role.equals("Instituation")) {
 			instituation = new InstituationDaoImpl();

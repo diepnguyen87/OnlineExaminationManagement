@@ -104,9 +104,39 @@ public class InstituationDaoImpl implements InstituationDao{
 		return null;
 	}
 
-	
-	
-	
-	
+	@Override
+	public String getInstituationID(String instiEmail) {
+		try{
+			String queryString = "Select * from instituation "
+								+ "where insti_email_address = ?";
+			connection = getConnection();
+			ptmt = connection.prepareStatement(queryString);
+			ptmt.setString(1, instiEmail);
+			resultSet = ptmt.executeQuery();
+			resultSet.next();
+			return resultSet.getString("instituation_id");
+		}catch(SQLException e){
+			e.printStackTrace();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			try{
+				if(resultSet != null){
+					resultSet.close();
+				}
+				if(ptmt != null){
+					ptmt.close();
+				}
+				if(connection != null){
+					connection.close();
+				}
+			}catch(SQLException e){
+				e.printStackTrace();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
 
 }

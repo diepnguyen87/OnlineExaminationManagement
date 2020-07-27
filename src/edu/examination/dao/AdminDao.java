@@ -6,5 +6,6 @@ import edu.examination.entity.AdminEntity;
 public interface AdminDao {
 
 	public List<AdminEntity> getAllAdmins();
-	public AdminEntity getUser(int adminID);
+	public AdminEntity getAdmin(int adminID);
+	public String getAdminID(String adminEmail);
 }

@@ -11,13 +11,13 @@ import edu.examination.config.ConnectionFactory;
 import edu.examination.dao.AdminDao;
 import edu.examination.entity.AdminEntity;
 
-public class AdminDaoImp implements AdminDao{
+public class AdminDaoImpl implements AdminDao{
 
 	private Connection connection = null;
 	private PreparedStatement ptmt = null;
 	private ResultSet resultSet = null;
 	
-	public AdminDaoImp(){
+	public AdminDaoImpl(){
 		
 	}
 	
@@ -69,8 +69,43 @@ public class AdminDaoImp implements AdminDao{
 	}
 
 	@Override
-	public AdminEntity getUser(int userID) {
+	public AdminEntity getAdmin(int adminID) {
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getAdminID(String adminEmail) {
+		try{
+			String queryString = "Select * from admin "
+								+ "where admin_email_address = ?";
+			connection = getConnection();
+			ptmt = connection.prepareStatement(queryString);
+			ptmt.setString(1, adminEmail);
+			resultSet = ptmt.executeQuery();
+			resultSet.next();
+			return resultSet.getString("admin_id");
+		}catch(SQLException e){
+			e.printStackTrace();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			try{
+				if(resultSet != null){
+					resultSet.close();
+				}
+				if(ptmt != null){
+					ptmt.close();
+				}
+				if(connection != null){
+					connection.close();
+				}
+			}catch(SQLException e){
+				e.printStackTrace();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		return null;
 	}
 

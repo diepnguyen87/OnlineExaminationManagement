@@ -7,26 +7,44 @@ import edu.examination.config.Error;
 import edu.examination.config.Message;
 import edu.examination.controller.LoginController;
 
-
 public class LoginPage extends LoginController {
 
 	private Scanner scanner = new Scanner(System.in);
 	private String email;
 	private String password;
-	
-	public LoginPage(){
-		
+
+	public LoginPage() {
+
 	}
-	
-	public LoginPage(String roleOption){
+
+	public LoginPage(String roleOption) {
 		super(roleOption);
 	}
-	
-	public void displayAdminLoginPage(){
-		System.out.println("==============LOGIN PAGE==============");
-		login();
+
+	public String getEmail(){
+		return this.email;
 	}
 	
+	public void displayAdminLoginPage() {
+		System.out.println("==============LOGIN PAGE==============");
+		System.out.println("1. Login");
+		System.out.println("2. Exit");
+		outerloop: while (true) {
+			System.out.print("Select option (enter 1 or 2): ");
+			String option = scanner.nextLine();
+			switch (option) {
+			case "1":
+				login();
+				break outerloop;
+			case "2":
+				System.out.println(Message.EXIT_APP.getDescription());
+				System.exit(0);
+			default:
+				System.out.println(Error.INCORRECT_OPTION.getDescription());
+			}
+		}
+	}
+
 	public void displayLoginPage() {
 		System.out.println("==============LOGIN PAGE==============");
 		System.out.println("1. Login");
@@ -49,26 +67,27 @@ public class LoginPage extends LoginController {
 				System.exit(0);
 			default:
 				System.out.println(Error.INCORRECT_OPTION.getDescription());
-				
+
 			}
 		}
 	}
 
-	public void login() {
-		outerloop:
-		while (true) {
+	private void login() {
+		outerloop: while (true) {
 			enterEmail();
 			enterPassword();
 			if (login(email, password) == true) {
 				System.out.println(Message.LOGIN_SUCCESSFUL.getDescription());
-				System.out.printf(ConsoleColors.BLUE_BOLD +
-						"WELCOME %s TO ONLINE EXAMINATION MANAGEMENT SYSTEM" + ConsoleColors.RESET, email.toUpperCase());
+				System.out.printf(ConsoleColors.BLUE_BOLD + "WELCOME %s TO ONLINE EXAMINATION MANAGEMENT SYSTEM%n"
+						+ ConsoleColors.RESET, email.toUpperCase());
+				HomePage homePage = new HomePage(this);
+				homePage.displayHomePage();
 				return;
 			} else {
 				System.out.println(Error.INCORRECT_AUTHENICATION.getDescription());
 				System.out.print("TRY AGAIN (enter Y/N)? ");
 				String option = scanner.nextLine().toUpperCase();
-				
+
 				switch (option) {
 				case "N":
 					break outerloop;
@@ -77,9 +96,9 @@ public class LoginPage extends LoginController {
 				}
 			}
 		}
-		if(role.equals("Admin")){
+		if (role.equals("Admin")) {
 			displayAdminLoginPage();
-		}else{
+		} else {
 			displayLoginPage();
 		}
 	}
