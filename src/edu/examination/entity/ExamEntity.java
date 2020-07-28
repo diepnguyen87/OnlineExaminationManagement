@@ -11,9 +11,30 @@ public class ExamEntity {
 	private String examInstituationAuthor;
 	private String examAdminAuthor;
 	private Date createdOn;
+	private String isDraft = "N";
+	
 	
 	public ExamEntity(){
 		
+	}
+	
+	public ExamEntity(String examTitle, int examDuration, int totalQuestion,
+			String examInstituationAuthor, String examAdminAuthor, String isDraft) {
+		super();
+		this.examTitle = examTitle;
+		this.examDuration = examDuration;
+		this.totalQuestion = totalQuestion;
+		this.examInstituationAuthor = examInstituationAuthor;
+		this.examAdminAuthor = examAdminAuthor;
+		this.isDraft = isDraft;
+	}
+	
+	public String getIsDraft() {
+		return isDraft;
+	}
+
+	public void setIsDraft(String isDraft) {
+		this.isDraft = isDraft;
 	}
 	
 	public String getExamID() {
@@ -69,16 +90,6 @@ public class ExamEntity {
 	}
 
 	public void setExamAdminAuthor(String examAdminAuthor) {
-		this.examAdminAuthor = examAdminAuthor;
-	}
-	
-	public ExamEntity(String examTitle, int examDuration, int totalQuestion,
-			String examInstituationAuthor, String examAdminAuthor) {
-		super();
-		this.examTitle = examTitle;
-		this.examDuration = examDuration;
-		this.totalQuestion = totalQuestion;
-		this.examInstituationAuthor = examInstituationAuthor;
 		this.examAdminAuthor = examAdminAuthor;
 	}
 	

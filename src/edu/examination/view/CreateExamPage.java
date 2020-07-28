@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import edu.examination.config.ConsoleColors;
 import edu.examination.config.Error;
 import edu.examination.config.Message;
 import edu.examination.controller.CreateExamController;
@@ -14,8 +15,7 @@ import edu.examination.entity.QuestionEntity;
 public class CreateExamPage extends CreateExamController {
 
 	private Scanner scanner = new Scanner(System.in);
-	private String examID, examTitle, examAuthor, questionID, questionText, optionText;
-	private int examDuration, totalQuestion, questionMark;
+	private String examID, examAuthor, questionID;
 	private List<OptionEntity> optionList;
 	private ExamEntity newExam;
 	private List<QuestionEntity> questionList = new ArrayList<QuestionEntity>();
@@ -26,13 +26,8 @@ public class CreateExamPage extends CreateExamController {
 
 	public CreateExamPage(LoginPage loginPage) {
 		super(loginPage);
-		role = loginPage.role;
 		newExam = new ExamEntity();
-		if(role.equals("Admin")){
-			newExam.setExamAdminAuthor(loginPage.getEmail());
-		}else if(role.equals("Instituation")){
-			newExam.setExamInstituationAuthor(loginPage.getEmail());
-		}
+		examAuthor = loginPage.getEmail();
 	}
 
 	public void displayCreateExamPage() {
@@ -57,42 +52,25 @@ public class CreateExamPage extends CreateExamController {
 
 	private void createExam() {
 		String option = "";
-
-		/*enterExamTitle();
-		enterExamDuration();*/
 		newExam.setExamTitle(enterExamTitle());
-		newExam.setExamDuration(examDuration);
-		//createExam(examTitle, examDuration, totalQuestion, examAuthor);
-		
-		//examID = getExamID(examTitle);
-		
-		outerLoop:
-		while (true) {
+		newExam.setExamDuration(enterExamDuration());
+
+		outerLoop: while (sum < 100) {
 			QuestionEntity newQuestion = new QuestionEntity();
-			
-			newQuestion.setQuestionText(enterQuestionText(totalQuestion));
+
+			newQuestion.setQuestionText(enterQuestionText(questionList.size()));
 			enterOptionText();
 			newQuestion.setQuestionMark(enterQuestionMark());
 			questionList.add(newQuestion);
-			/*enterQuestionText(totalQuestion);
-			enterOptionText();
-			enterQuestionMark();*/
-			//createQuestion(examID, questionText, questionMark);
-			//questionID = getQuestionID(examID, questionText);
 
-			for (int i = 0; i < optionList.size(); ++i) {
-				//createOption(questionID, (i + 1), optionList.get(i));
-			}
-			++totalQuestion;
 			System.out.println("============================");
-			while(true){
+			while (sum < 100) {
 				System.out.print("Add more question (enter Y/N)? ");
 				option = scanner.nextLine().toUpperCase();
 				switch (option) {
 				case "Y":
 					continue outerLoop;
 				case "N":
-					exam.updateTotalQuestion(examID, totalQuestion);
 					break outerLoop;
 				default:
 					System.out.println(Error.INCORRECT_OPTION.getDescription());
@@ -100,8 +78,85 @@ public class CreateExamPage extends CreateExamController {
 				}
 			}
 		}
+		displaySubmit();
+	}
 
+	private void displaySubmit() {
+		newExam.setTotalQuestion(questionList.size());
+		if (sum < 100) {
+			menu_notEnoughMark();
+		} else {
+			menu_EnoughMark();
+		}
 		
+	}
+
+	private void menu_EnoughMark() {
+		String option = "";
+		System.out.println("Do you want to submit or save as draft: ");
+		System.out.println("1. Submit");
+		System.out.println("2. Save as draft");
+		System.out.println("3. Cancel");
+
+		outerLoop: while (true) {
+			System.out.print("Select option (enter 1 or 2): ");
+			option = scanner.nextLine();
+			switch (option) {
+			case "1":
+				save();
+				System.out.println(Message.EXAM_SUBMIT_SUCCESSFUL.getDescription());
+				break outerLoop;
+			case "2":
+				newExam.setIsDraft("Y");
+				save();
+				System.out.println(Message.EXAM_SAVE_AS_DRAFT_SUCCESSFUL.getDescription());
+				break outerLoop;
+			case "3":
+				HomePage homePage = new HomePage(loginPage);
+				homePage.displayHomePage();
+				//break;
+			default:
+				System.out.println(Error.INCORRECT_OPTION.getDescription());
+			}
+		}
+	}
+
+	private void menu_notEnoughMark() {
+		String option = "";
+		System.out.println(Message.TOTAL_MARK_NOT_ENOUGH.getDescription());
+		System.out.println("1. Save as draft");
+		System.out.println("2. Cancel");
+		outerLoop: while (true) {
+			System.out.print("Select option (enter 1 or 2): ");
+			option = scanner.nextLine();
+			switch (option) {
+			case "1":
+				newExam.setIsDraft("Y");
+				save();
+				System.out.println(Message.EXAM_SAVE_AS_DRAFT_SUCCESSFUL.getDescription());
+				break outerLoop;
+			case "2":
+				HomePage homePage = new HomePage(loginPage);
+				homePage.displayHomePage();
+				//break;
+			default:
+				System.out.println(Error.INCORRECT_OPTION.getDescription());
+			}
+		}
+	}
+
+	private void save() {
+		createExam(newExam, examAuthor);
+		examID = getExamID(newExam.getExamTitle());
+		for (int i = 0; i < questionList.size(); ++i) {
+			QuestionEntity currentQuestion = questionList.get(i);
+			createQuestion(examID, currentQuestion.getQuestionText(), currentQuestion.getQuestionMark());
+			questionID = getQuestionID(examID, currentQuestion.getQuestionText());
+			for (int j = 0; j < optionList.size(); ++j) {
+				OptionEntity currentOption = optionList.get(j);
+				createOption(questionID, currentOption.getOptionNumber(), currentOption.getOptionText());
+			}
+		}
 	}
 
 	private String enterExamTitle() {
@@ -113,7 +168,7 @@ public class CreateExamPage extends CreateExamController {
 				System.out.println(Error.EXAM_TITLE_BLANK.getDescription());
 				continue;
 			}
-			if (isExamTitleDuplicated(examTitle)==true){
+			if (isExamTitleDuplicated(examTitle) == true) {
 				System.out.println(Error.EXAM_TITLE_DUPLICATED.getDescription());
 				continue;
 			}
@@ -143,7 +198,7 @@ public class CreateExamPage extends CreateExamController {
 	private String enterQuestionText(int nthQuestion) {
 		String questionText = "";
 		while (true) {
-			System.out.printf("Enter question %s: ", (nthQuestion+1));
+			System.out.printf("Enter question %s: ", (nthQuestion + 1));
 			questionText = scanner.nextLine();
 			if (questionText.isEmpty()) {
 				System.out.println(Error.QUESTION_TEXT_BLANK.getDescription());
@@ -158,27 +213,34 @@ public class CreateExamPage extends CreateExamController {
 		int questionMark = 0;
 		int totalMark = 0;
 		String option = "";
-		
-		outerLoop:
-		while (true) {
+
+		outerLoop: while (true) {
 			try {
 				System.out.print("Enter question mark: ");
 				questionMark = Integer.parseInt(scanner.nextLine());
 				if (questionMark <= 0 || questionMark > 100) {
 					System.out.println(Error.INVALID_QUESTION_MARK.getDescription());
 					continue;
-				}sds
+				}
 				totalMark = sum + questionMark;
-				if(totalMark > 100) {
-					System.out.println("Total marks can not over 100");
-					while(true) {
+				if (totalMark > 100) {
+					System.out.printf(
+							ConsoleColors.RED + "Total mark of 1 exam must be 100 and your current total mark is %d%n"
+									+ ConsoleColors.RESET,
+							totalMark);
+
+					while (true) {
 						System.out.print("Do you want to re-enter question mark (Y/N)? ");
 						option = scanner.nextLine().toUpperCase();
 						switch (option) {
 						case "Y":
 							continue outerLoop;
 						case "N":
-							System.out.println("The mark of last question will be re-calculated to match with condition");
+							System.out
+									.println("The mark of last question will be re-calculated to match with condition");
+							System.out.println("The mark you entered for last question is: " + questionMark);
+							questionMark = 100 - sum;
+							System.out.println("The app re-calculated into: " + questionMark);
 							break outerLoop;
 						default:
 							System.out.println(Error.INCORRECT_OPTION.getDescription());
@@ -191,35 +253,26 @@ public class CreateExamPage extends CreateExamController {
 			}
 			break;
 		}
-		sum+=questionMark;
+		sum += questionMark;
 		return questionMark;
 	}
 
-	private void abc() {
-		if(sum>100) {
-			System.out.println("Total marks can not over 100");
-		}
-	}
-	
 	private List<OptionEntity> enterOptionText() {
 		String option = "";
 		String optionText = "";
 		optionList = new ArrayList<OptionEntity>();
-		int i=0;
-		
+		int i = 0;
+
 		outerLoop: while (true) {
-			//System.out.printf("Enter option %s: ", optionList.size() + 1);
 			System.out.printf("Enter option %s: ", ++i);
-			
+
 			optionText = scanner.nextLine();
 			if (optionText.isEmpty()) {
 				System.out.println(Error.OPTION_TEXT_BLANK.getDescription());
 				continue;
 			}
-			//optionList.add(optionText);
 			optionList.add(new OptionEntity(i, optionText));
-			innerLoop:
-			while(true){
+			innerLoop: while (true) {
 				System.out.print("Add more option (enter Y/N)? ");
 				option = scanner.nextLine().toUpperCase();
 				switch (option) {
@@ -232,10 +285,8 @@ public class CreateExamPage extends CreateExamController {
 					continue innerLoop;
 				}
 			}
-			
 		}
 		return optionList;
 	}
-	
-	
+
 }

@@ -73,8 +73,47 @@ public class ExamDaoImpl implements ExamDao{
 	}
 
 	@Override
-	public ExamEntity getExam(int examID) {
-		// TODO Auto-generated method stub
+	public ExamEntity getExam(String examTitle) {
+		try{
+			String queryString = "Select * from exam " +
+								"Where exam_title = ?";
+			connection = getConnection();
+			ptmt = connection.prepareStatement(queryString);
+			ptmt.setString(1, examTitle);
+			resultSet = ptmt.executeQuery();
+			if(resultSet.next()){
+				ExamEntity currentExam = new ExamEntity();
+				currentExam.setExamID(resultSet.getString("exam_id"));
+				currentExam.setExamTitle(resultSet.getString("exam_title"));
+				currentExam.setExamDuration(resultSet.getInt("exam_duration"));
+				currentExam.setTotalQuestion(resultSet.getInt("total_question"));
+				currentExam.setExamInstituationAuthor(resultSet.getString("exam_instituation_author"));
+				currentExam.setExamAdminAuthor(resultSet.getString("exam_admin_author"));
+				currentExam.setCreatedOn(resultSet.getDate("created_on"));
+				currentExam.setIsDraft(resultSet.getString("is_draft"));
+				return currentExam;
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			try{
+				if(resultSet != null){
+					resultSet.close();
+				}
+				if(ptmt != null){
+					ptmt.close();
+				}
+				if(connection != null){
+					connection.close();
+				}
+			}catch(SQLException e){
+				e.printStackTrace();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		return null;
 	}
 
@@ -82,8 +121,8 @@ public class ExamDaoImpl implements ExamDao{
 	public int addExam(ExamEntity newExam) {
 		int addedRows=0;
 		try {
-		String queryString = "Insert into exam(exam_title, exam_duration, total_question, exam_instituation_author, exam_admin_author) "
-							+ "values(?,?,?,?,?)";
+		String queryString = "Insert into exam(exam_title, exam_duration, total_question, exam_instituation_author, exam_admin_author, is_draft) "
+							+ "values(?,?,?,?,?,?)";
 			connection = getConnection();
 			ptmt = connection.prepareStatement(queryString);
 			ptmt.setString(1, newExam.getExamTitle());
@@ -91,6 +130,7 @@ public class ExamDaoImpl implements ExamDao{
 			ptmt.setInt(3, newExam.getTotalQuestion());
 			ptmt.setString(4, newExam.getExamInstituationAuthor());
 			ptmt.setString(5, newExam.getExamAdminAuthor());
+			ptmt.setString(6, newExam.getIsDraft());
 			addedRows = ptmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -122,8 +162,9 @@ public class ExamDaoImpl implements ExamDao{
 			ptmt = connection.prepareStatement(queryString);
 			ptmt.setString(1, examTitle);
 			resultSet = ptmt.executeQuery();
-			resultSet.next();
-			return resultSet.getString("exam_id");
+			if(resultSet.next()){
+				return resultSet.getString("exam_id");
+			}
 		}catch(SQLException e){
 			e.printStackTrace();
 		}catch (Exception e) {
@@ -183,5 +224,329 @@ public class ExamDaoImpl implements ExamDao{
 		return -1;
 	}
 
+	@Override
+	public List<ExamEntity> getSubmittedExams() {
+		try{
+			String queryString = "Select * from exam "
+								+ "where is_draft = 'N'";
+			connection = getConnection();
+			ptmt = connection.prepareStatement(queryString);
+			resultSet = ptmt.executeQuery();
+			List<ExamEntity> examList = new ArrayList<ExamEntity>();
+			int i = 0;
+			while(resultSet.next()){
+				ExamEntity currentExam = new ExamEntity();
+				currentExam.setExamTitle(resultSet.getString("exam_title"));
+				currentExam.setExamDuration(resultSet.getInt("exam_duration"));
+				currentExam.setTotalQuestion(resultSet.getInt("total_question"));
+				currentExam.setExamInstituationAuthor(resultSet.getString("exam_instituation_author"));
+				currentExam.setExamAdminAuthor(resultSet.getString("exam_admin_author"));
+				currentExam.setCreatedOn(resultSet.getDate("created_on"));
+				currentExam.setIsDraft(resultSet.getString("is_draft"));
+				
+				examList.add(currentExam);
+				i++;
+			}
+			return examList;
+		}catch(SQLException e){
+			e.printStackTrace();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			try{
+				if(resultSet != null){
+					resultSet.close();
+				}
+				if(ptmt != null){
+					ptmt.close();
+				}
+				if(connection != null){
+					connection.close();
+				}
+			}catch(SQLException e){
+				e.printStackTrace();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
 	
+
+	@Override
+	public List<ExamEntity> getSubmittedExams_Admin(String examAuthorID) {
+		try{
+			String queryString = "Select * from exam "
+								+ "where exam_admin_author = ? "
+								+ "and is_draft = 'N'";
+			connection = getConnection();
+			ptmt = connection.prepareStatement(queryString);
+			ptmt.setString(1, examAuthorID);
+			resultSet = ptmt.executeQuery();
+			List<ExamEntity> examList = new ArrayList<ExamEntity>();
+			int i = 0;
+			while(resultSet.next()){
+				ExamEntity currentExam = new ExamEntity();
+				currentExam.setExamID(resultSet.getString("exam_id"));
+				currentExam.setExamTitle(resultSet.getString("exam_title"));
+				currentExam.setExamDuration(resultSet.getInt("exam_duration"));
+				currentExam.setTotalQuestion(resultSet.getInt("total_question"));
+				currentExam.setExamInstituationAuthor(resultSet.getString("exam_instituation_author"));
+				currentExam.setExamAdminAuthor(resultSet.getString("exam_admin_author"));
+				currentExam.setCreatedOn(resultSet.getDate("created_on"));
+				currentExam.setIsDraft(resultSet.getString("is_draft"));
+				
+				examList.add(currentExam);
+				i++;
+			}
+			return examList;
+		}catch(SQLException e){
+			e.printStackTrace();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			try{
+				if(resultSet != null){
+					resultSet.close();
+				}
+				if(ptmt != null){
+					ptmt.close();
+				}
+				if(connection != null){
+					connection.close();
+				}
+			}catch(SQLException e){
+				e.printStackTrace();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+	
+
+	@Override
+	public List<ExamEntity> getSubmittedExams_Institute(String examAuthorID) {
+		try{
+			String queryString = "Select * from exam "
+								+ "where exam_instituation_author = ? "
+								+ "and is_draft = 'N'";
+			connection = getConnection();
+			ptmt = connection.prepareStatement(queryString);
+			ptmt.setString(1, examAuthorID);
+			resultSet = ptmt.executeQuery();
+			List<ExamEntity> examList = new ArrayList<ExamEntity>();
+			int i = 0;
+			while(resultSet.next()){
+				ExamEntity currentExam = new ExamEntity();
+				currentExam.setExamID(resultSet.getString("exam_id"));
+				currentExam.setExamTitle(resultSet.getString("exam_title"));
+				currentExam.setExamDuration(resultSet.getInt("exam_duration"));
+				currentExam.setTotalQuestion(resultSet.getInt("total_question"));
+				currentExam.setExamInstituationAuthor(resultSet.getString("exam_instituation_author"));
+				currentExam.setExamAdminAuthor(resultSet.getString("exam_admin_author"));
+				currentExam.setCreatedOn(resultSet.getDate("created_on"));
+				currentExam.setIsDraft(resultSet.getString("is_draft"));
+				
+				examList.add(currentExam);
+				i++;
+			}
+			return examList;
+		}catch(SQLException e){
+			e.printStackTrace();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			try{
+				if(resultSet != null){
+					resultSet.close();
+				}
+				if(ptmt != null){
+					ptmt.close();
+				}
+				if(connection != null){
+					connection.close();
+				}
+			}catch(SQLException e){
+				e.printStackTrace();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public List<ExamEntity> getDraftExams_Admin(String examAuthorID) {
+		try{
+			String queryString = "Select * from exam "
+								+ "where exam_admin_author = ? "
+								+ "and is_draft = 'Y'";
+			connection = getConnection();
+			ptmt = connection.prepareStatement(queryString);
+			ptmt.setString(1, examAuthorID);
+			resultSet = ptmt.executeQuery();
+			List<ExamEntity> examList = new ArrayList<ExamEntity>();
+			int i = 0;
+			while(resultSet.next()){
+				ExamEntity currentExam = new ExamEntity();
+				currentExam.setExamID(resultSet.getString("exam_id"));
+				currentExam.setExamTitle(resultSet.getString("exam_title"));
+				currentExam.setExamDuration(resultSet.getInt("exam_duration"));
+				currentExam.setTotalQuestion(resultSet.getInt("total_question"));
+				currentExam.setExamInstituationAuthor(resultSet.getString("exam_instituation_author"));
+				currentExam.setExamAdminAuthor(resultSet.getString("exam_admin_author"));
+				currentExam.setCreatedOn(resultSet.getDate("created_on"));
+				currentExam.setIsDraft(resultSet.getString("is_draft"));
+				
+				examList.add(currentExam);
+				i++;
+			}
+			return examList;
+		}catch(SQLException e){
+			e.printStackTrace();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			try{
+				if(resultSet != null){
+					resultSet.close();
+				}
+				if(ptmt != null){
+					ptmt.close();
+				}
+				if(connection != null){
+					connection.close();
+				}
+			}catch(SQLException e){
+				e.printStackTrace();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public List<ExamEntity> getDraftExams_Institute(String examAuthorID) {
+		try{
+			String queryString = "Select * from exam "
+								+ "where exam_instituation_author = ? "
+								+ "and is_draft = 'Y'";
+			connection = getConnection();
+			ptmt = connection.prepareStatement(queryString);
+			ptmt.setString(1, examAuthorID);
+			resultSet = ptmt.executeQuery();
+			List<ExamEntity> examList = new ArrayList<ExamEntity>();
+			int i = 0;
+			while(resultSet.next()){
+				ExamEntity currentExam = new ExamEntity();
+				currentExam.setExamID(resultSet.getString("exam_id"));
+				currentExam.setExamTitle(resultSet.getString("exam_title"));
+				currentExam.setExamDuration(resultSet.getInt("exam_duration"));
+				currentExam.setTotalQuestion(resultSet.getInt("total_question"));
+				currentExam.setExamInstituationAuthor(resultSet.getString("exam_instituation_author"));
+				currentExam.setExamAdminAuthor(resultSet.getString("exam_admin_author"));
+				currentExam.setCreatedOn(resultSet.getDate("created_on"));
+				currentExam.setIsDraft(resultSet.getString("is_draft"));
+				
+				examList.add(currentExam);
+				i++;
+			}
+			return examList;
+		}catch(SQLException e){
+			e.printStackTrace();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			try{
+				if(resultSet != null){
+					resultSet.close();
+				}
+				if(ptmt != null){
+					ptmt.close();
+				}
+				if(connection != null){
+					connection.close();
+				}
+			}catch(SQLException e){
+				e.printStackTrace();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public int updateExamTitle(String examTitle, String examID) {
+		int result = -1;
+		try{
+			String queryString = "Update exam "
+								+ "set exam_title = ? "
+								+ "Where exam_id = ?";
+			connection = getConnection();
+			ptmt = connection.prepareStatement(queryString);
+			ptmt.setString(1, examTitle);
+			ptmt.setString(2, examID);
+			result = ptmt.executeUpdate();
+		}catch(SQLException e){
+			e.printStackTrace();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			try{
+				if(resultSet != null){
+					resultSet.close();
+				}
+				if(ptmt != null){
+					ptmt.close();
+				}
+				if(connection != null){
+					connection.close();
+				}
+			}catch(SQLException e){
+				e.printStackTrace();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public int updateExamDuration(int examDuration, String examID) {
+		int result = -1;
+		try{
+			String queryString = "Update exam "
+								+ "set exam_duration = ? "
+								+ "Where exam_id = ?";
+			connection = getConnection();
+			ptmt = connection.prepareStatement(queryString);
+			ptmt.setInt(1, examDuration);
+			ptmt.setString(2, examID);
+			result = ptmt.executeUpdate();
+		}catch(SQLException e){
+			e.printStackTrace();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			try{
+				if(resultSet != null){
+					resultSet.close();
+				}
+				if(ptmt != null){
+					ptmt.close();
+				}
+				if(connection != null){
+					connection.close();
+				}
+			}catch(SQLException e){
+				e.printStackTrace();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}	
 }

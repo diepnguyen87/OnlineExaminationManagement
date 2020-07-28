@@ -49,7 +49,9 @@ CREATE TABLE `exam` (
 	`exam_instituation_author` INT(11) NULL DEFAULT NULL,
 	`exam_admin_author` INT(11) NULL DEFAULT NULL,
 	`created_on` DATETIME NOT NULL DEFAULT current_timestamp(),
+	`is_draft` ENUM('Y','N') NOT NULL DEFAULT 'N' COLLATE 'utf8_general_ci',
 	PRIMARY KEY (`exam_id`) USING BTREE,
+	UNIQUE INDEX `exam_title` (`exam_title`) USING BTREE,
 	INDEX `FK_exam_instituation` (`exam_instituation_author`) USING BTREE,
 	INDEX `FK_exam_admin` (`exam_admin_author`) USING BTREE,
 	CONSTRAINT `FK_exam_admin` FOREIGN KEY (`exam_admin_author`) REFERENCES `exam_management`.`admin` (`admin_id`) ON UPDATE RESTRICT ON DELETE RESTRICT,
@@ -58,6 +60,7 @@ CREATE TABLE `exam` (
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB
 ;
+
 
 
 CREATE TABLE `question` (

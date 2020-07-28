@@ -1,8 +1,5 @@
 package edu.examination.controller;
 
-import java.awt.Robot;
-import java.util.List;
-
 import edu.examination.dao.AdminDao;
 import edu.examination.dao.ExamDao;
 import edu.examination.dao.InstituationDao;
@@ -25,6 +22,7 @@ public class CreateExamController {
 	protected OptionDao option;
 	protected InstituationDao instituation;
 	protected AdminDao admin;
+	protected LoginPage loginPage;
 	public String role;
 	
 	public CreateExamController(){
@@ -36,6 +34,7 @@ public class CreateExamController {
 	
 	public CreateExamController(LoginPage loginPage){
 		this();
+		this.loginPage = loginPage;
 		role = loginPage.role;
 		if(role.equals("Admin")){
 			admin = new AdminDaoImpl();
@@ -44,12 +43,13 @@ public class CreateExamController {
 		}
 	}
 	
-	public void createExam(String examTitle, int examDuration, int totalQuestion, String examAuthor){
+	public void createExam(ExamEntity newExam, String examAuthor){
 		if(role.equals("Admin")){
-			exam.addExam(new ExamEntity(examTitle, examDuration, totalQuestion, null, examAuthor));
+			newExam.setExamAdminAuthor(admin.getAdminID(examAuthor));
 		}else if(role.equals("Instituation")){
-			exam.addExam(new ExamEntity(examTitle, examDuration, totalQuestion, examAuthor, null));
+			newExam.setExamInstituationAuthor(instituation.getInstituationID(examAuthor));
 		}
+		exam.addExam(newExam);
 	}
 	
 	public String getExamID(String examTitle){
@@ -71,13 +71,11 @@ public class CreateExamController {
 	}
 	
 	public boolean isExamTitleDuplicated(String examTitle){
-		List<ExamEntity> examList = exam.getAllExams();
-		for(ExamEntity currentExam : examList){
-			if(currentExam.getExamTitle().equals(examTitle)){
-				return true;
-			}
+		String result = exam.getExamID(examTitle);
+		if(result == null){
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 }
