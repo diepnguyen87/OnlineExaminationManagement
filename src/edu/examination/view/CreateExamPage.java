@@ -18,7 +18,8 @@ public class CreateExamPage extends CreateExamController {
 	private int examDuration, totalQuestion, questionMark;
 	private List<OptionEntity> optionList;
 	private ExamEntity newExam;
-	private List<QuestionEntity> questionList;
+	private List<QuestionEntity> questionList = new ArrayList<QuestionEntity>();
+	private int sum;
 	
 	public CreateExamPage() {
 	}
@@ -72,6 +73,7 @@ public class CreateExamPage extends CreateExamController {
 			newQuestion.setQuestionText(enterQuestionText(totalQuestion));
 			enterOptionText();
 			newQuestion.setQuestionMark(enterQuestionMark());
+			questionList.add(newQuestion);
 			/*enterQuestionText(totalQuestion);
 			enterOptionText();
 			enterQuestionMark();*/
@@ -99,6 +101,7 @@ public class CreateExamPage extends CreateExamController {
 			}
 		}
 
+		
 	}
 
 	private String enterExamTitle() {
@@ -153,6 +156,10 @@ public class CreateExamPage extends CreateExamController {
 
 	private int enterQuestionMark() {
 		int questionMark = 0;
+		int totalMark = 0;
+		String option = "";
+		
+		outerLoop:
 		while (true) {
 			try {
 				System.out.print("Enter question mark: ");
@@ -161,15 +168,39 @@ public class CreateExamPage extends CreateExamController {
 					System.out.println(Error.INVALID_QUESTION_MARK.getDescription());
 					continue;
 				}
+				totalMark = sum + questionMark;
+				if(totalMark > 100) {
+					System.out.println("Total marks can not over 100");
+					while(true) {
+						System.out.print("Do you want to re-enter question mark (Y/N)? ");
+						option = scanner.nextLine().toUpperCase();
+						switch (option) {
+						case "Y":
+							continue outerLoop;
+						case "N":
+							System.out.println("The mark of last question will be re-calculated to match with condition");
+							break outerLoop;
+						default:
+							System.out.println(Error.INCORRECT_OPTION.getDescription());
+						}
+					}
+				}
 			} catch (NumberFormatException e) {
 				System.out.println(Error.NOT_A_NUMBER.getDescription());
 				continue;
 			}
 			break;
 		}
+		sum+=questionMark;
 		return questionMark;
 	}
 
+	private void abc() {
+		if(sum>100) {
+			System.out.println("Total marks can not over 100");
+		}
+	}
+	
 	private List<OptionEntity> enterOptionText() {
 		String option = "";
 		String optionText = "";
