@@ -167,7 +167,7 @@ public class CreateExamPage extends CreateExamController {
 				if (questionMark <= 0 || questionMark > 100) {
 					System.out.println(Error.INVALID_QUESTION_MARK.getDescription());
 					continue;
-				}
+				}sds
 				totalMark = sum + questionMark;
 				if(totalMark > 100) {
 					System.out.println("Total marks can not over 100");
