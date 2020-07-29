@@ -16,9 +16,10 @@ public class CreateExamPage extends CreateExamController {
 
 	private Scanner scanner = new Scanner(System.in);
 	private String examID, examAuthor, questionID;
-	private List<OptionEntity> optionList;
 	private ExamEntity newExam;
 	private List<QuestionEntity> questionList = new ArrayList<QuestionEntity>();
+	private List<List<OptionEntity>> allOptions = new ArrayList<>();
+	
 	private int sum;
 	
 	public CreateExamPage() {
@@ -59,10 +60,11 @@ public class CreateExamPage extends CreateExamController {
 			QuestionEntity newQuestion = new QuestionEntity();
 
 			newQuestion.setQuestionText(enterQuestionText(questionList.size()));
-			enterOptionText();
+			List<OptionEntity> optionList = enterOptionText();
 			newQuestion.setQuestionMark(enterQuestionMark());
 			questionList.add(newQuestion);
-
+			allOptions.add(optionList);
+			
 			System.out.println("============================");
 			while (sum < 100) {
 				System.out.print("Add more question (enter Y/N)? ");
@@ -88,7 +90,6 @@ public class CreateExamPage extends CreateExamController {
 		} else {
 			menu_EnoughMark();
 		}
-		
 	}
 
 	private void menu_EnoughMark() {
@@ -146,12 +147,15 @@ public class CreateExamPage extends CreateExamController {
 	}
 
 	private void save() {
+		List<OptionEntity> optionList;
+		
 		createExam(newExam, examAuthor);
 		examID = getExamID(newExam.getExamTitle());
 		for (int i = 0; i < questionList.size(); ++i) {
 			QuestionEntity currentQuestion = questionList.get(i);
 			createQuestion(examID, currentQuestion.getQuestionText(), currentQuestion.getQuestionMark());
 			questionID = getQuestionID(examID, currentQuestion.getQuestionText());
+			optionList = allOptions.get(i);
 			for (int j = 0; j < optionList.size(); ++j) {
 				OptionEntity currentOption = optionList.get(j);
 				createOption(questionID, currentOption.getOptionNumber(), currentOption.getOptionText());
@@ -260,7 +264,7 @@ public class CreateExamPage extends CreateExamController {
 	private List<OptionEntity> enterOptionText() {
 		String option = "";
 		String optionText = "";
-		optionList = new ArrayList<OptionEntity>();
+		List<OptionEntity> optionList = new ArrayList<OptionEntity>();
 		int i = 0;
 
 		outerLoop: while (true) {
@@ -272,6 +276,8 @@ public class CreateExamPage extends CreateExamController {
 				continue;
 			}
 			optionList.add(new OptionEntity(i, optionText));
+			
+			
 			innerLoop: while (true) {
 				System.out.print("Add more option (enter Y/N)? ");
 				option = scanner.nextLine().toUpperCase();

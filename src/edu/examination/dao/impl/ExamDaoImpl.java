@@ -236,6 +236,7 @@ public class ExamDaoImpl implements ExamDao{
 			int i = 0;
 			while(resultSet.next()){
 				ExamEntity currentExam = new ExamEntity();
+				currentExam.setExamID(resultSet.getString("exam_id"));
 				currentExam.setExamTitle(resultSet.getString("exam_title"));
 				currentExam.setExamDuration(resultSet.getInt("exam_duration"));
 				currentExam.setTotalQuestion(resultSet.getInt("total_question"));

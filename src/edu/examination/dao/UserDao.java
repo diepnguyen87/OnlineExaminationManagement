@@ -6,6 +6,6 @@ import edu.examination.entity.UserEntity;
 public interface UserDao {
 
 	public List<UserEntity> getAllUsers();
-	public UserEntity getUser(int userID);
 	public int addUser(UserEntity newUser);
+	public UserEntity getUserByUserEmail(String userEmail);
 }

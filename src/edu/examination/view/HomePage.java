@@ -95,15 +95,15 @@ public class HomePage {
 
 	public void displayHomePage_User() {
 		System.out.println("==============HOME PAGE==============");
-		System.out.println("1. Select exam");
+		System.out.println("1. Display all exams");
 		System.out.println("2. Exit");
 		outerloop: while (true) {
 			System.out.print("Select option (enter 1/2/3/4): ");
 			String option = scanner.nextLine();
 			switch (option) {
 			case "1":
-				CreateExamPage createExamPage = new CreateExamPage(loginPage);
-				createExamPage.displayCreateExamPage();
+				UserPage userPage = new UserPage(loginPage);
+				userPage.displayUserPage();
 				break outerloop;
 			case "2":
 				System.out.println(Message.EXIT_APP.getDescription());

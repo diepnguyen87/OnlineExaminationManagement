@@ -70,9 +70,42 @@ public class UserDaoImpl implements UserDao{
 
 	
 	@Override
-	public UserEntity getUser(int userID) {
-		
-		return null;
+	public UserEntity getUserByUserEmail(String userEmail){
+		try{
+			String queryString = "Select * from user "
+								+ "where user_email_address = ?";
+			connection = getConnection();
+			ptmt = connection.prepareStatement(queryString);
+			ptmt.setString(1, userEmail);
+			resultSet = ptmt.executeQuery();
+			resultSet.next();
+			UserEntity user = new UserEntity();
+			user.setUserID(resultSet.getString("user_id"));
+			user.setUserEmailAddress(resultSet.getString("user_email_address"));
+			user.setUserPassword(resultSet.getString("user_password"));
+			return user;
+		}catch(SQLException e){
+			e.printStackTrace();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			try{
+				if(resultSet != null){
+					resultSet.close();
+				}
+				if(ptmt != null){
+					ptmt.close();
+				}
+				if(connection != null){
+					connection.close();
+				}
+			}catch(SQLException e){
+				e.printStackTrace();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return null;	
 	}
 	
 
