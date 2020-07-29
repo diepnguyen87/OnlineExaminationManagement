@@ -127,7 +127,7 @@ public class UserPage extends UserController{
 					System.out.println(Error.NOT_A_NUMBER.getDescription());
 				}
 			}
-		}
+		}fgf
 	}
 
 	private synchronized void displayMenu_Submit() {
