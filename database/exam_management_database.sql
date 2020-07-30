@@ -142,7 +142,7 @@ INSERT INTO `admin` (`admin_email_address`, `admin_password`)
 VALUES ('admin1@kits.edu', '123?Abcd');
 
 INSERT INTO `exam` (`exam_title`, `exam_duration`, `total_question`, `exam_admin_author`)
-VALUES ('Core Java Quiz', 20, 6, 1);
+VALUES ('Core Java Quiz', 1, 6, 1);
 
 INSERT INTO `question` (`exam_id`, `question_text`, `question_mark`)
 VALUES 
@@ -171,10 +171,10 @@ VALUES
 	(3, 4, 'Polymorphism'),
 	(3, 5, 'Generics'),
 	
-	(4, 1, 'The “extend” keyword is used to extend a class in java.'),
+	(4, 1, 'The extend keyword is used to extend a class in java.'),
 	(4, 2, 'You can extend multiple classes in java.'),
 	(4, 3, 'Private members of the superclass are accessible to the subclass.'),
-	(4, 4, 'We can’t extend Final classes in java.'),
+	(4, 4, 'We cant extend Final classes in java.'),
 
 	(5, 1, 'Runtime Exception'),
 	(5, 2, 'ClassCast Exception'),
@@ -184,7 +184,16 @@ VALUES
 	(6, 1, 'JVM is responsible for converting Byte code to the machine-specific code.'),
 	(6, 2, 'We only need JRE to run java programs.'),
 	(6, 3, 'JDK is required to compile java programs.'),
-	(6, 4, 'JRE doesn’t contain JVM');
+	(6, 4, 'JRE doesnt contain JVM');
 	
+	
+INSERT INTO `question_answer` (`question_id`, `option_id`)
+VALUES
+	(1, 1),
+	(2, 6),
+	(3, 10),
+	(4, 14),
+	(5, 19),
+	(6, 25);
 	
 	

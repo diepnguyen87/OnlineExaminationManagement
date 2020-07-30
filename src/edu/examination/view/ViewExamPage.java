@@ -50,10 +50,4 @@ public class ViewExamPage extends ViewExamController{
 			System.out.printf("%d. %s - %d questions%n", (i+1), currentExam.getExamTitle(), currentExam.getTotalQuestion());
 		}
 	}
-	
-	private void abc(){
-		String option = "";
-		System.out.print("Enter exam title that you want to view: ");
-		option = scanner.nextLine();
-	}
 }

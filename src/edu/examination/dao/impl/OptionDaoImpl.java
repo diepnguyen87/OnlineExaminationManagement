@@ -10,7 +10,6 @@ import java.util.List;
 import edu.examination.config.ConnectionFactory;
 import edu.examination.dao.OptionDao;
 import edu.examination.entity.OptionEntity;
-import edu.examination.entity.QuestionEntity;
 
 public class OptionDaoImpl implements OptionDao{
 

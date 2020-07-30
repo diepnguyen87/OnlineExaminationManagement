@@ -9,8 +9,6 @@ import java.util.List;
 
 import edu.examination.config.ConnectionFactory;
 import edu.examination.dao.QuestionDao;
-import edu.examination.entity.AdminEntity;
-import edu.examination.entity.ExamEntity;
 import edu.examination.entity.QuestionEntity;
 
 public class QuestionDaoImpl implements QuestionDao{

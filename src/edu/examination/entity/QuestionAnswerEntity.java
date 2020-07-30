@@ -19,8 +19,16 @@ public class QuestionAnswerEntity {
 		return questionID;
 	}
 
+	public void setQuestionID(String questionID) {
+		this.questionID = questionID;
+	}
+
 	public String getOptionID() {
 		return optionID;
+	}
+
+	public void setOptionID(String optionID) {
+		this.optionID = optionID;
 	}
 	
 }

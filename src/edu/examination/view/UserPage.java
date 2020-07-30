@@ -1,11 +1,13 @@
 package edu.examination.view;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import edu.examination.config.ConsoleColors;
 import edu.examination.config.Error;
+import edu.examination.config.Message;
 import edu.examination.controller.UserController;
 import edu.examination.entity.ExamEntity;
 import edu.examination.entity.OptionEntity;
@@ -19,7 +21,9 @@ public class UserPage extends UserController{
 	private List<OptionEntity> userAnswers = new ArrayList<OptionEntity>();
 	List<QuestionEntity> questionList;
 	public boolean isSubmitted = false;
-	private Thread timeoutThread;
+	private int op;
+	
+	long startTime;
 	
 	public UserPage() {
 
@@ -65,6 +69,7 @@ public class UserPage extends UserController{
 
 	private void displayStartExam_Menu(){
 		String option = "";
+		System.out.println("============================");
 		System.out.println("1. Start exam");
 		System.out.println("2. Cancel");
 		
@@ -74,17 +79,16 @@ public class UserPage extends UserController{
 			option = scanner.nextLine();
 			switch (option) {
 			case "1":
-				  timeoutThread = new Thread() { 
-					  public void run() { 
-						  try {
-						  Thread.sleep(selectedExam.getExamDuration()*60*1000);
-						  submit();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					} } };
-				timeoutThread.start();
+				startTime = System.currentTimeMillis();
+				
 				displayQuestionsByExam(selectedExam);
-				displayMenu_Submit();
+				if(isSubmitted==false){
+					displayMenu_Submit();
+				}else{
+					//ResultPage resultPage = new ResultPage();
+					//resultPage.displayResultPage();
+				}
+				
 				break outerLoop;
 			case "2":
 				HomePage homePage = new HomePage(loginPage);
@@ -96,9 +100,9 @@ public class UserPage extends UserController{
 		}
 	}
 
-	private void displayQuestionsByExam(ExamEntity exam) throws InterruptedException {
-		int option = 0;
-		System.out.printf("==============STARTING %s==============%n", selectedExam.getExamTitle());
+	private void displayQuestionsByExam(ExamEntity exam) {
+		//int option = 0;
+		System.out.printf("==============STARTING %s (%d)==============%n", selectedExam.getExamTitle(), selectedExam.getExamDuration());
 		questionList = getAllQuestionsByExamID(selectedExam.getExamID());
 		for (int i = 0; i < questionList.size(); ++i) {
 			QuestionEntity currentQuestion = questionList.get(i);
@@ -112,38 +116,45 @@ public class UserPage extends UserController{
 			while (true) {
 				try {
 					System.out.print("Your answer (enter 1/2/3...): ");
-					while(isSubmitted = false) {
-						option = Integer.parseInt(scanner.nextLine());
-						Thread.sleep(100);
+					if(isTimeout(selectedExam.getExamDuration())==true){
+						autoSubmit();
+						return;
 					}
-				
-					if (option > optionList.size() + 1) {
+					
+					if (op > optionList.size() + 1) {
 						System.out.println(Error.INCORRECT_OPTION.getDescription());
 						continue;
 					}
-					userAnswers.add(optionD.getOption(currentQuestion.getQuestionID(), option));
+					userAnswers.add(optionD.getOption(currentQuestion.getQuestionID(), op));
 					break;
 				} catch (NumberFormatException e) {
 					System.out.println(Error.NOT_A_NUMBER.getDescription());
 				}
 			}
-		}fgf
+		}
 	}
 
-	private synchronized void displayMenu_Submit() {
+	private void displayMenu_Submit() {
 		System.out.println("============================");
-		int option = 0;
 
 		outLoop: while (true) {
 			try {
 				System.out.println("1. Submit");
 				System.out.println("2. Cancel");
 				System.out.print("Do you want to submit or cancel: ");
-				option = Integer.parseInt(scanner.nextLine());
-				switch (option) {
+				
+				if(isTimeout(selectedExam.getExamDuration())==true){
+					autoSubmit();
+					//ResultPage resultPage = new ResultPage(loginPage, selectedExam);
+					//resultPage.displayResultPage();
+					return;
+				}
+				
+				switch (op) {
 				case 1:
 					submit();
-					
+					isSubmitted = true;
+					System.out.println(Message.EXAM_SUBMIT_SUCCESSFUL.getDescription());
 					break outLoop;
 				case 2:
 					break;
@@ -156,23 +167,46 @@ public class UserPage extends UserController{
 		}
 	}
 
-	private synchronized boolean submit() {
+	private void submit() {
 		String optionID = null;
-		if(isSubmitted == false) {
+		
 			String userID = getUserID(loginPage.getEmail());
 			String examID = selectedExam.getExamID();
-			
+
 			for (int i = 0; i < questionList.size(); ++i) {
 				QuestionEntity currentQuestion = questionList.get(i);
-				if(userAnswers.size() > 0 && userAnswers.get(i) != null) {
-					optionID = getOptionID(currentQuestion.getQuestionID(), userAnswers.get(i).getOptionNumber());
+				if(i < userAnswers.size()){
+					if(userAnswers.size() > 0 && userAnswers.get(i) != null) {
+						String a = currentQuestion.getQuestionID();
+						int b = userAnswers.get(i).getOptionNumber();
+						/*optionID = getOptionID(currentQuestion.getQuestionID(), userAnswers.get(i).getOptionNumber());*/
+						optionID = getOptionID(a,b);
+					}
+				}else{
+					optionID = null;
 				}
-				
 				insertUserAnswer(new UserAnswerEntity(userID, examID, currentQuestion.getQuestionID(), optionID));
 			}
-			isSubmitted = true;
-			return true;
+	}
+	
+	private boolean isTimeout(int examDuration){
+		while((System.currentTimeMillis() - startTime) < examDuration*60*1000){
+			try {
+				if(System.in.available() > 0){
+					op = Integer.parseInt(scanner.nextLine());
+					return false;
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}						
 		}
-		return false;
+		return true;
+	}
+	
+	private void autoSubmit(){
+		submit();
+		isSubmitted = true;
+		System.out.println("\n" + Message.TIME_OUT.getDescription());
+		System.out.println(Message.EXAM_AUTO_SUBMIT.getDescription());
 	}
 }

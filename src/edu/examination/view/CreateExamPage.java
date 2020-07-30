@@ -10,6 +10,7 @@ import edu.examination.config.Message;
 import edu.examination.controller.CreateExamController;
 import edu.examination.entity.ExamEntity;
 import edu.examination.entity.OptionEntity;
+import edu.examination.entity.QuestionAnswerEntity;
 import edu.examination.entity.QuestionEntity;
 
 public class CreateExamPage extends CreateExamController {
@@ -19,7 +20,7 @@ public class CreateExamPage extends CreateExamController {
 	private ExamEntity newExam;
 	private List<QuestionEntity> questionList = new ArrayList<QuestionEntity>();
 	private List<List<OptionEntity>> allOptions = new ArrayList<>();
-	
+	private List<Integer> correctionOptions = new ArrayList<>();
 	private int sum;
 	
 	public CreateExamPage() {
@@ -61,9 +62,11 @@ public class CreateExamPage extends CreateExamController {
 
 			newQuestion.setQuestionText(enterQuestionText(questionList.size()));
 			List<OptionEntity> optionList = enterOptionText();
-			newQuestion.setQuestionMark(enterQuestionMark());
+			
 			questionList.add(newQuestion);
 			allOptions.add(optionList);
+			correctionOptions.add(enterCorrectAnswer(optionList));
+			newQuestion.setQuestionMark(enterQuestionMark());
 			
 			System.out.println("============================");
 			while (sum < 100) {
@@ -160,6 +163,9 @@ public class CreateExamPage extends CreateExamController {
 				OptionEntity currentOption = optionList.get(j);
 				createOption(questionID, currentOption.getOptionNumber(), currentOption.getOptionText());
 			}
+			//String optionID = option.getOption(questionID, correctionOptions.get(i).getOptionNumber()).getOptionID();
+			String optionID = option.getOption(questionID, correctionOptions.get(i)).getOptionID();
+			createQuestionAnswers(new QuestionAnswerEntity(questionID, optionID));
 		}
 	}
 
@@ -261,6 +267,28 @@ public class CreateExamPage extends CreateExamController {
 		return questionMark;
 	}
 
+	
+	private int enterCorrectAnswer(List<OptionEntity> optionList){
+		int correctionOption = 0;
+		int option = 0;
+		while(true){
+			try{
+				System.out.print("Enter correct answer by option number: ");
+				option = Integer.parseInt(scanner.nextLine());
+				if(option <= 0 || option > optionList.size()){
+					System.out.println(Error.INCORRECT_OPTION.getDescription());
+					continue;
+				}
+				/*correctionOption = optionList.get(option-1);*/
+				correctionOption = option;
+				break;
+			}catch(NumberFormatException e){
+				System.out.println(Error.NOT_A_NUMBER.getDescription());
+			}
+		}
+		return correctionOption;
+	}
+	
 	private List<OptionEntity> enterOptionText() {
 		String option = "";
 		String optionText = "";

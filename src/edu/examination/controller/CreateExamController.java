@@ -4,14 +4,17 @@ import edu.examination.dao.AdminDao;
 import edu.examination.dao.ExamDao;
 import edu.examination.dao.InstituationDao;
 import edu.examination.dao.OptionDao;
+import edu.examination.dao.QuestionAnswerDao;
 import edu.examination.dao.QuestionDao;
 import edu.examination.dao.impl.AdminDaoImpl;
 import edu.examination.dao.impl.ExamDaoImpl;
 import edu.examination.dao.impl.InstituationDaoImpl;
 import edu.examination.dao.impl.OptionDaoImpl;
+import edu.examination.dao.impl.QuestionAnswerDaoImpl;
 import edu.examination.dao.impl.QuestionDaoImpl;
 import edu.examination.entity.ExamEntity;
 import edu.examination.entity.OptionEntity;
+import edu.examination.entity.QuestionAnswerEntity;
 import edu.examination.entity.QuestionEntity;
 import edu.examination.view.LoginPage;
 
@@ -23,6 +26,8 @@ public class CreateExamController {
 	protected InstituationDao instituation;
 	protected AdminDao admin;
 	protected LoginPage loginPage;
+	protected QuestionAnswerDao qAnswer;
+	
 	public String role;
 	
 	public CreateExamController(){
@@ -76,6 +81,11 @@ public class CreateExamController {
 			return false;
 		}
 		return true;
+	}
+	
+	public void createQuestionAnswers(QuestionAnswerEntity questionAnswer){
+		qAnswer = new QuestionAnswerDaoImpl();
+		qAnswer.addQuestionAnswer(questionAnswer);
 	}
 
 }
